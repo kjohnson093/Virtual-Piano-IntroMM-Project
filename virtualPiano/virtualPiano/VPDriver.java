@@ -13,10 +13,9 @@ public class VPDriver {
 	public static void main(String[] args) throws MidiUnavailableException {
 		
 		PianoRoll piano = new PianoRoll();
-		JFrame frame = new JFrame();
+		JFrame frame = new JFrame("Virtual Piano");
         frame.setSize(970, 300);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
         frame.getContentPane().add(piano);
         frame.setVisible(true);
         piano.requestFocus();

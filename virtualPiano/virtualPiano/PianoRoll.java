@@ -19,60 +19,57 @@ public class PianoRoll extends JPanel implements KeyListener{
 	// Create instrument object from default sound bank.
 	private Instrument[] instr = synth.getDefaultSoundbank().getInstruments();
 	private String blackKeys = "23 567 90 SDF HJ";
-    private String whiteKeys = "QWERTYUIOPZXCVBNM";
-    private String allKeys = "Q2W3ER5T6Y7UI9O0PZSXDCFVBHNJM";
-    private boolean[] keyOn = new boolean[allKeys.length()];
+	private String whiteKeys = "QWERTYUIOPZXCVBNM";
+	private String allKeys = "Q2W3ER5T6Y7UI9O0PZSXDCFVBHNJM";
+	private boolean[] keyOn = new boolean[allKeys.length()];
 	public PianoRoll() throws MidiUnavailableException {
-		this.synth.open();  
+		synth.open();  
 
 		// Instruments are used to choose what instrument the sound is played with.
-		this.synth.loadInstrument(instr[90]);
+		synth.loadInstrument(instr[2]);
 
 		// Set Piano Roll focusable to allow keyboard input
-		this.setFocusable(true);
+		setFocusable(true);
 
 		setPreferredSize(new Dimension(1000,400));
-		JPanel pane = new JPanel();     
-		JButton button1 = new JButton("Click me!");              
-		pane.add(button1);    
 		setFocusable(true); //set frame focusable to allow keyboard input
 		addKeyListener(this); //Add key listener to frame to current piano roll
 	}
 	@Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        
-        g.translate(50, 50);
-        
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
 
-        // draw white keys
-        final int WHITE_KEY_WIDTH = 50;
-        final int WHITE_KEY_HEIGHT = 100;
-        for (int k = 0; k < whiteKeys.length(); k++) {
-            g.setColor(keyOn[allKeys.indexOf(whiteKeys.charAt(k))] ? Color.GREEN
- : Color.WHITE);
-            g.fillRect(k * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
-            g.setColor(Color.BLACK);
-            g.drawRect(k * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
-            g.drawString(" " + whiteKeys.charAt(k), k * WHITE_KEY_WIDTH + 10, WHITE_KEY_HEIGHT - 10);
-        }
+		g.translate(50, 50);
 
-        // draw black keys
-        final int BLACK_KEY_WIDTH = WHITE_KEY_WIDTH / 2;
-        final int BLACK_KEY_HEIGHT = WHITE_KEY_HEIGHT / 2;
-        for (int k = 0; k < blackKeys.length(); k++) {
-            if (blackKeys.charAt(k) == ' ') {
-                continue;
-            }
-            int x = (k + 1) * WHITE_KEY_WIDTH - BLACK_KEY_WIDTH / 2;
-            g.setColor(keyOn[allKeys.indexOf(blackKeys.charAt(k))] ? Color.GREEN
- : Color.BLACK);
-            g.fillRect(x, 1, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
-            g.setColor(Color.WHITE);
-            g.drawRect(x, 1, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
-            g.drawString(" " + blackKeys.charAt(k), x + 2, BLACK_KEY_HEIGHT - 5);
-        }
-    }
+
+		// draw white keys
+		final int WHITE_KEY_WIDTH = 50;
+		final int WHITE_KEY_HEIGHT = 200;
+		for (int k = 0; k < whiteKeys.length(); k++) {
+			g.setColor(keyOn[allKeys.indexOf(whiteKeys.charAt(k))] ? Color.CYAN
+					: Color.WHITE);
+			g.fillRect(k * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
+			g.setColor(Color.BLACK);
+			g.drawRect(k * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
+			g.drawString(" " + whiteKeys.charAt(k), k * WHITE_KEY_WIDTH + 10, WHITE_KEY_HEIGHT - 10);
+		}
+
+		// draw black keys
+		final int BLACK_KEY_WIDTH = WHITE_KEY_WIDTH / 2;
+		final int BLACK_KEY_HEIGHT = WHITE_KEY_HEIGHT / 2;
+		for (int k = 0; k < blackKeys.length(); k++) {
+			if (blackKeys.charAt(k) == ' ') {
+				continue;
+			}
+			int x = (k + 1) * WHITE_KEY_WIDTH - BLACK_KEY_WIDTH / 2;
+			g.setColor(keyOn[allKeys.indexOf(blackKeys.charAt(k))] ? Color.CYAN
+					: Color.BLACK);
+			g.fillRect(x, 1, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
+			g.setColor(Color.WHITE);
+			g.drawRect(x, 1, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
+			g.drawString(" " + blackKeys.charAt(k), x + 2, BLACK_KEY_HEIGHT - 5);
+		}
+	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -90,7 +87,17 @@ public class PianoRoll extends JPanel implements KeyListener{
 	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
-		int keyCode = e.getKeyCode();		
+		repaint();
+		int keyCode = e.getKeyCode();
+		int noteIndex = allKeys.indexOf((char) e.getKeyCode()); 
+
+		//Ignore keyboard input out of key range
+		if (noteIndex <= -1) {
+			return;
+		}
+		else
+			keyOn[noteIndex] = true;
+
 		//Plays C3 if 'Q' pressed
 		if (keyCode == KeyEvent.VK_Q) {
 			mc[5].noteOn(48,300);
@@ -216,6 +223,12 @@ public class PianoRoll extends JPanel implements KeyListener{
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		repaint();
+		int noteIndex = allKeys.indexOf((char) e.getKeyCode()); 
+		if (noteIndex < 0) {
+			return;
+		}
+		keyOn[noteIndex] = false;
 		int keyCode = e.getKeyCode();		
 		//Plays C3 if 'Q' pressed
 		if (keyCode == KeyEvent.VK_Q) {
