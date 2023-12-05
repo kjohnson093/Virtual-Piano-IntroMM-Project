@@ -12,6 +12,13 @@ import java.awt.event.*;
 import javax.sound.midi.*;
 import javax.swing.*;
 
+/*
+ * Class: PianoRoll
+ * This is the primary class for handling all keyboard input and converting it
+ * to MIDI output using the default java MIDI library. Keys are drawn and 
+ * updated by using java graphics.
+ */
+
 public class PianoRoll extends JPanel implements KeyListener{
 	private Synthesizer synth = MidiSystem.getSynthesizer(); 
 	// Get array of MidiChannels, all sounds must be generated through a channel
@@ -22,7 +29,10 @@ public class PianoRoll extends JPanel implements KeyListener{
 	private String whiteKeys = "QWERTYUIOPZXCVBNM";
 	private String allKeys = "Q2W3ER5T6Y7UI9O0PZSXDCFVBHNJM";
 	private boolean[] keyOn = new boolean[allKeys.length()];
+	
+	// Constructor for starting the synth and setting the panel for the GUI
 	public PianoRoll() throws MidiUnavailableException {
+		
 		synth.open();  
 
 		// Instruments are used to choose what instrument the sound is played with.
@@ -30,7 +40,6 @@ public class PianoRoll extends JPanel implements KeyListener{
 
 		// Set Piano Roll focusable to allow keyboard input
 		setFocusable(true);
-
 		setPreferredSize(new Dimension(1000,400));
 		setFocusable(true); //set frame focusable to allow keyboard input
 		addKeyListener(this); //Add key listener to frame to current piano roll
@@ -74,7 +83,6 @@ public class PianoRoll extends JPanel implements KeyListener{
 	@Override
 	public void keyTyped(KeyEvent e) {
 
-
 	}
 
 	/* 
@@ -87,8 +95,10 @@ public class PianoRoll extends JPanel implements KeyListener{
 	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
+		
 		repaint();
 		int keyCode = e.getKeyCode();
+		//Set index of piano keys and typing keys equal
 		int noteIndex = allKeys.indexOf((char) e.getKeyCode()); 
 
 		//Ignore keyboard input out of key range
